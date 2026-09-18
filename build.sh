@@ -320,6 +320,18 @@ if $ON_OSX; then
   sed_inplace() {
     sed -i '' "$@"
   }
+
+  # Recent Xcode toolchains no longer default to an SDK sysroot, so the bare
+  # compiler driver cannot find system headers (e.g. inttypes.h) and the tlib
+  # build fails. Point it at the active SDK unless the caller already set one.
+  if [[ -z "${SDKROOT:-}" ]]; then
+    SDKROOT="$(xcrun --show-sdk-path 2>/dev/null || true)"
+    if [[ -n "$SDKROOT" ]]; then
+      export SDKROOT
+    else
+      echo "warning: could not determine macOS SDK path; the native build may fail to find system headers" >&2
+    fi
+  fi
 else
   cp_u() {
     cp -u $@
