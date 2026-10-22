@@ -26,3 +26,5 @@ packages
 perf.data
 perf.script
 .venv
+
+.DS_Store
